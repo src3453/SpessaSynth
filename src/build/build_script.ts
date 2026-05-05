@@ -96,6 +96,7 @@ export async function buildSpessaSynth() {
 
     const demoInput = path.resolve(WEBSITE_SRC_DIR, "js/main/demo_main.ts");
     const localInput = path.resolve(WEBSITE_SRC_DIR, "js/main/local_main.ts");
+    const workerInput = path.resolve(WEBSITE_SRC_DIR, "js/manager/worker.ts");
     const serverInput = path.resolve(SERVER_SRC_DIR, "server.ts");
     const stylesInput = path.resolve(WEBSITE_SRC_DIR, "css/style.css");
 
@@ -123,6 +124,19 @@ export async function buildSpessaSynth() {
         entryPoints: [localInput],
         ...regularOptions,
         splitting: true,
+        sourcemap: "linked",
+        outdir: LOCAL_DIR
+    });
+
+    print("Building worker scripts for both editions...");
+    await esbuild.build({
+        entryPoints: [workerInput],
+        ...regularOptions,
+        outdir: DEMO_DIR_SRC
+    });
+    await esbuild.build({
+        entryPoints: [workerInput],
+        ...regularOptions,
         sourcemap: "linked",
         outdir: LOCAL_DIR
     });
