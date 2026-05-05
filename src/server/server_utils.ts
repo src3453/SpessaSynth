@@ -5,7 +5,8 @@ import { fileURLToPath } from "node:url";
 // Don't use import.meta.dirname: https://github.com/spessasus/SpessaSynth
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 // Allow running the .ts files in src/ directly
-const isDev = currentDir.includes("/src");
+// Detect both POSIX and Windows path separators ("/src" or "\\src").
+const isDev = /[\/\\]src/.test(currentDir);
 
 export const rootDir = isDev
     ? path.join(currentDir, "../..")

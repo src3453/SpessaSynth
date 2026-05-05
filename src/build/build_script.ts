@@ -1,7 +1,6 @@
 import path from "node:path";
 import fs from "node:fs/promises";
 import * as esbuild from "esbuild";
-import metaUrlPlugin from "@chialab/esbuild-plugin-meta-url";
 import JSZip from "jszip";
 import { INSTALL_INSTRUCTIONS } from "./install_instructions.ts";
 import { fileURLToPath } from "node:url";
@@ -112,7 +111,6 @@ export async function buildSpessaSynth() {
 
     print("Building demo...");
     await esbuild.build({
-        plugins: [metaUrlPlugin()],
         entryPoints: [demoInput],
         splitting: true,
         ...regularOptions,
@@ -122,7 +120,6 @@ export async function buildSpessaSynth() {
 
     print("Building local edition with sourcemaps...");
     await esbuild.build({
-        plugins: [metaUrlPlugin()],
         entryPoints: [localInput],
         ...regularOptions,
         splitting: true,
