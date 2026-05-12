@@ -13,6 +13,9 @@ export class ProgramTracker {
     /**
      * All used channels (multiport) for the current MIDI or all if no MIDI is playing.
      */
+    public readonly BankNumbersMSB: number[] = [];
+    public readonly BankNumbersLSB: number[] = [];
+    public readonly presetNumbers: number[] = [];
     public readonly usedChannels = new Set<number>();
     /**
      * Same as usedChannels, except only 0-15 MIDI channels.
@@ -89,6 +92,9 @@ export class ProgramTracker {
                     ) ?? this.presetList[0];
                 this.presetNames[e.channel] =
                     (preset.isAnyDrums ? "(D) " : "") + preset.name;
+                this.BankNumbersMSB[e.channel] = c.bankMSB;
+                this.BankNumbersLSB[e.channel] = c.bankLSB;
+                this.presetNumbers[e.channel] = c.program;
             }
         );
     }
@@ -101,6 +107,9 @@ export class ProgramTracker {
             isGMGSDrum: this.channelTrackers.length % 16 === 9
         });
         this.presetNames.push("");
+        this.BankNumbersMSB.push(0);
+        this.BankNumbersLSB.push(0);
+        this.presetNumbers.push(0);
         this.usedChannels.add(this.channelTrackers.length - 1);
         this.usedParts.add((this.channelTrackers.length - 1) % 16);
     }
@@ -118,6 +127,9 @@ export class ProgramTracker {
                 ) ?? this.presetList[0];
             this.presetNames[i] =
                 (preset.isAnyDrums ? "(D) " : "") + preset.name;
+            this.BankNumbersMSB[i] = c.bankMSB;
+            this.BankNumbersLSB[i] = c.bankLSB;
+            this.presetNumbers[i] = c.program;
         }
     }
 }

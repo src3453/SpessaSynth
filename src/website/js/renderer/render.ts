@@ -78,8 +78,9 @@ export function render(this: Renderer, auto = true, force = false) {
                         used.has(chan) ||
                         (this.voicesPlaying[part] && !usedParts.has(part))
                     ) {
+                        const text = `${this.programTracker.BankNumbersLSB[chan]}:${this.programTracker.BankNumbersMSB[chan]}:${this.programTracker.presetNumbers[chan]} ${names[chan]}`;
                         this.drawingContext.fillText(
-                            names[chan] ?? `CH ${part + 1}`,
+                            text,
                             relativeX,
                             relativeY
                         );

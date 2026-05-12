@@ -1,4 +1,4 @@
-const SAMPLE_RATE = 44_100;
+const SAMPLE_RATE = 48000;
 
 export function readSampleRateParam() {
     const params = new URLSearchParams(window.location.search);
