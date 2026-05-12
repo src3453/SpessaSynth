@@ -1,5 +1,6 @@
 import path from "node:path";
 import fs from "node:fs/promises";
+import child_process from "node:child_process";
 import * as esbuild from "esbuild";
 import JSZip from "jszip";
 import { INSTALL_INSTRUCTIONS } from "./install_instructions.ts";
@@ -13,6 +14,28 @@ const print = (t = "") => {
     console.info(t);
 };
 
+const runNpmScript = (cwd: string, args: string[]) => {
+    const isWindows = process.platform === "win32";
+    const proc = child_process.spawnSync(
+        isWindows ? "cmd" : "npm",
+        isWindows ? ["/c", "npm", ...args] : args,
+        {
+            cwd,
+            stdio: "inherit"
+        }
+    );
+
+    if (proc.error) {
+        throw proc.error;
+    }
+
+    if (proc.status !== 0) {
+        throw new Error(
+            `Failed to run npm ${args.join(" ")} in ${cwd} (exit ${proc.status}).`
+        );
+    }
+};
+
 export async function buildSpessaSynth() {
     // Don't use meta.dirname: https://github.com/spessasus/SpessaSynth
     const REPO_ROOT = path.resolve(
@@ -20,12 +43,16 @@ export async function buildSpessaSynth() {
         "../.."
     );
 
+    const LIBS_DIR = path.resolve(REPO_ROOT, "libs");
+    const CORE_LIB_DIR = path.resolve(LIBS_DIR, "spessasynth_core");
+    const SPESSASYNTH_LIB_DIR = path.resolve(LIBS_DIR, "spessasynth_lib");
+
     const SERVER_SRC_DIR = path.resolve(REPO_ROOT, "src/server");
     const WEBSITE_SRC_DIR = path.resolve(REPO_ROOT, "src/website");
     const WORKLET_NAME = "spessasynth_processor.min.js";
     const WORKLET_PATH = path.resolve(
         REPO_ROOT,
-        `node_modules/spessasynth_lib/dist/${WORKLET_NAME}`
+        `libs/spessasynth_lib/dist/${WORKLET_NAME}`
     );
     const SOUNDFONT_NAME = "GeneralUserGS.sf3";
 
@@ -41,6 +68,11 @@ export async function buildSpessaSynth() {
     };
 
     print("Building SpessaSynth...");
+
+    printStep("⚙️  0) Build local libraries");
+
+    runNpmScript(CORE_LIB_DIR, ["run", "build:fast"]);
+    runNpmScript(SPESSASYNTH_LIB_DIR, ["run", "build:npm"]);
 
     printStep("⚙️  1) Clean dist directories");
 

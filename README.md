@@ -102,7 +102,9 @@ also allowing to use it offline! [You can download it here.](https://spessasus.g
 ```shell
 # clone
 git clone "https://github.com/spessasus/SpessaSynth" --depth 1
-# install dependencies
+# clone the local libraries beside the app
+npm run setup:libs
+# install dependencies from libs/
 npm i
 # build and start the local edition
 npm start

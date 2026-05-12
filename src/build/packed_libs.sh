@@ -3,12 +3,12 @@
 set -euo pipefail
 cd "$(dirname "$0")" || exit
 cd ../..
-echo "🪲  Enabling debug mode, building both libraries"
-echo "This expects spessasynth_core, spessasynth_lib and SpessaSynth to be in the same directory."
+echo "🪲  Building local clones from libs/ before the web app"
+echo "This expects libs/spessasynth_core and libs/spessasynth_lib to exist inside SpessaSynth."
 
 echo "Building core..."
 
-cd ../spessasynth_core
+cd libs/spessasynth_core
 npm run build:fast
 
 
@@ -19,6 +19,6 @@ npm run debug
 
 echo "Web App"
 
-cd ../SpessaSynth
-npm run debug
+cd ../..
+npm run build:fast
 
